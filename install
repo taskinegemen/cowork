@@ -1,0 +1,24 @@
+
+#!/bin/bash
+echo "Hello, "$USER".  This script will install linden coworking software!"
+echo "Please enter the directory that you want to install:"
+read directory
+
+while [ ! -d $directory ]
+do
+    echo "$directory is not available!"
+    echo "Please enter the directory that you want to install:"
+    read directory
+done
+pure_directory=$directory
+directory=$(echo $directory | sed 's:/:\\/:g')
+sed_path=`echo "'s/__DIR__/$directory/g'"`
+sed_command="sed $sed_path service.sh"
+eval $sed_command > cowork
+chmod u+x cowork
+mv cowork /etc/init.d/cowork
+eval "cp -r ./* $pure_directory/"
+update-rc.d -f cowork remove
+update-rc.d cowork defaults
+echo "Successfully installed!"
+
